@@ -75,7 +75,6 @@ type
       Label6: TLabel;
       Label7: TLabel;
       Label9: TLabel;
-      Button3: TButton;
       procedure FormCreate(Sender: TObject);
       procedure FormDestroy(Sender: TObject);
       procedure Button1Click(Sender: TObject);
@@ -189,14 +188,14 @@ end;
 procedure TfrmDemoAI21.OnOpenAIResponse(Sender: TObject);
 var
    field: TField;
-   Engine: TPair<string, string>;
+	Engine: TPair<string, string>;
 begin
    Button1.Enabled := True;
    AniIndicator1.Enabled := False;
 
-   Memo2.Lines.Add('Record count = ' + FDMemTable1.RecordCount.ToString);
+	Memo2.Lines.Add('Record count = ' + FDMemTable1.RecordCount.ToString);
    while not FDMemTable1.Eof do
-   begin
+	begin
       Memo2.Lines.Add('{');
       for field in FDMemTable1.Fields do
          Memo2.Lines.Add(field.FieldName + ': "' + Trim(field.AsString) + '"' + IfThen(field.Index = FDMemTable1.Fields.Count - 1,

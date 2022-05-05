@@ -29,9 +29,6 @@ Coordinates=30,77,53,51
 [Label1]
 Coordinates=394,251,46,51
 
-[Memo2]
-Coordinates=504,232,49,51
-
 [Panel1]
 Coordinates=366,365,47,33
 
@@ -49,4 +46,7 @@ Coordinates=394,174,46,51
 
 [mmPrompt]
 Coordinates=170,78,49,51
+
+[mmResponse]
+Coordinates=504,232,49,51
 

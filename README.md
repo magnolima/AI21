@@ -3,7 +3,8 @@
 
 Initial release
 
-We are going to cover conditions request.
+- Added GetChoicesResult() method
+- Removed old OpenAI based on demo code.
 
 **IMPORTANT**: to use AI21 you'll need to have your own API key. Please go to https://studio.ai21.com/.
 

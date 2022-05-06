@@ -20,81 +20,81 @@ unit MLAI21.Core;
 interface
 
 uses
-   System.Diagnostics, System.Classes, System.SysUtils, Data.Bind.Components,
-   Data.Bind.ObjectScope, REST.Client, REST.Types,
-   FireDAC.Stan.Intf,
-   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error,
-   REST.Response.Adapter,
-   FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf, System.StrUtils,
-   System.Generics.Collections,
-   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, System.Types,
-   System.IOUtils, System.TypInfo, System.JSON,
-   MLAI21.Types, MLAI21.Complete;
+	System.Diagnostics, System.Classes, System.SysUtils, Data.Bind.Components,
+	Data.Bind.ObjectScope, REST.Client, REST.Types,
+	FireDAC.Stan.Intf,
+	FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error,
+	REST.Response.Adapter,
+	FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf, System.StrUtils,
+	System.Generics.Collections,
+	Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, System.Types,
+	System.IOUtils, System.TypInfo, System.JSON,
+	MLAI21.Types, MLAI21.Complete;
 
 type
-   TRESTRequestOAI = class(TRESTRequest)
-   private
-      FRequestType: TAI21Requests;
-      property RequestType: TAI21Requests read FRequestType write FRequestType;
-   end;
+	TRESTRequestOAI = class(TRESTRequest)
+	private
+		FRequestType: TAI21Requests;
+		property RequestType: TAI21Requests read FRequestType write FRequestType;
+	end;
 
 type
-   TAI21 = class(TObject)
-   private
-      //
-      FAcceptType: String;
-      FContentType: String;
-      FEndpoint: String;
-      FResource: String;
-      FErrorMessage: String;
-      FBodyContent: String;
-      FEngine: TAI21Engine;
-      FRequestType: TAI21Requests;
-      FEnginesList: TDictionary<String, String>;
-      FOnResponse: TNotifyEvent;
-      FOnError: TNotifyEvent;
-      FAPIKey: String;
-      FOrganization: String;
-      FRESTRequest: TRESTRequestOAI;
-      FRESTClient: TRESTClient;
-      FRESTResponse: TRESTResponse;
+	TAI21 = class(TObject)
+	private
+		//
+		FAcceptType: String;
+		FContentType: String;
+		FEndpoint: String;
+		FResource: String;
+		FErrorMessage: String;
+		FBodyContent: String;
+		FEngine: TAI21Engine;
+		FRequestType: TAI21Requests;
+		FEnginesList: TDictionary<String, String>;
+		FOnResponse: TNotifyEvent;
+		FOnError: TNotifyEvent;
+		FAPIKey: String;
+		FOrganization: String;
+		FRESTRequest: TRESTRequestOAI;
+		FRESTClient: TRESTClient;
+		FRESTResponse: TRESTResponse;
 		FMemtable: TFDMemTable;
-      FCompletions: TComplete;
-      FStatusCode: Integer;
-      procedure readEngines;
-      procedure SetEndPoint(const Value: String);
-      procedure SetApiKey(const Value: string);
-      procedure SetOrganization(const Value: String);
-      procedure SetEngine(const Value: TAI21Engine);
-      procedure SetCompletions(const Value: TComplete);
-      procedure CreateRESTRespose;
-      procedure CreateRESTClient;
-      procedure CreateRESTRequest;
-      procedure ExecuteCompletions;
-      procedure HttpRequestError(Sender: TCustomRESTRequest);
-      procedure HttpClientError(Sender: TCustomRESTClient);
-   public
-      constructor Create(var MemTable: TFDMemTable; const APIFileName: String = '');
-      destructor Destroy; Override;
-      // procedure HttpError(Sender: TCustomRESTClient);
-      property ErrorMessage: String read FErrorMessage;
-   published
-      procedure Execute;
-      procedure Stop;
-      function GetChoicesResult: String;
-      procedure AfterExecute(Sender: TCustomRESTRequest);
-      property OnResponse: TNotifyEvent read FOnResponse write FOnResponse;
-      property OnError: TNotifyEvent read FOnError write FOnError;
-      property StatusCode: Integer read FStatusCode;
-      property Engine: TAI21Engine read FEngine write SetEngine;
-      property Endpoint: String read FEndpoint write SetEndPoint;
-      property Organization: String read FOrganization write SetOrganization;
-      property APIKey: String read FAPIKey write SetApiKey;
-      property AvailableEngines: TDictionary<String, String> read FEnginesList;
-      property RequestType: TAI21Requests read FRequestType write FRequestType;
-      property Completions: TComplete write SetCompletions;
-      property BodyContent: String read FBodyContent;
-   end;
+		FCompletions: TComplete;
+		FStatusCode: Integer;
+		procedure readEngines;
+		procedure SetEndPoint(const Value: String);
+		procedure SetApiKey(const Value: string);
+		procedure SetOrganization(const Value: String);
+		procedure SetEngine(const Value: TAI21Engine);
+		procedure SetCompletions(const Value: TComplete);
+		procedure CreateRESTRespose;
+		procedure CreateRESTClient;
+		procedure CreateRESTRequest;
+		procedure ExecuteCompletions;
+		procedure HttpRequestError(Sender: TCustomRESTRequest);
+		procedure HttpClientError(Sender: TCustomRESTClient);
+	public
+		constructor Create(var MemTable: TFDMemTable; const APIFileName: String = '');
+		destructor Destroy; Override;
+		// procedure HttpError(Sender: TCustomRESTClient);
+		property ErrorMessage: String read FErrorMessage;
+	published
+		procedure Execute;
+		procedure Stop;
+		function GetChoicesResult: String;
+		procedure AfterExecute(Sender: TCustomRESTRequest);
+		property OnResponse: TNotifyEvent read FOnResponse write FOnResponse;
+		property OnError: TNotifyEvent read FOnError write FOnError;
+		property StatusCode: Integer read FStatusCode;
+		property Engine: TAI21Engine read FEngine write SetEngine;
+		property Endpoint: String read FEndpoint write SetEndPoint;
+		property Organization: String read FOrganization write SetOrganization;
+		property APIKey: String read FAPIKey write SetApiKey;
+		property AvailableEngines: TDictionary<String, String> read FEnginesList;
+		property RequestType: TAI21Requests read FRequestType write FRequestType;
+		property Completions: TComplete write SetCompletions;
+		property Response: String read GetChoicesResult;
+	end;
 
 implementation
 
@@ -102,187 +102,183 @@ implementation
 
 function SliceString(const AString: string; const ADelimiter: string): TArray<String>;
 var
-   I: Integer;
-   PLine, PStart: PChar;
-   s: String;
+	I: Integer;
+	PLine, PStart: PChar;
+	s: String;
 begin
 
-   I := 1;
-   PLine := PChar(AString);
+	I := 1;
+	PLine := PChar(AString);
 
-   PStart := PLine;
-   inc(PLine);
+	PStart := PLine;
+	inc(PLine);
 
-   while (I < Length(AString)) do
-   begin
-      while (PLine^ <> #0) and (PLine^ <> ADelimiter) do
-      begin
-         inc(PLine);
-         inc(I);
-      end;
+	while (I < Length(AString)) do
+	begin
+		while (PLine^ <> #0) and (PLine^ <> ADelimiter) do
+		begin
+			inc(PLine);
+			inc(I);
+		end;
 
-      SetString(s, PStart, PLine - PStart);
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1] := s;
-      inc(PLine);
-      inc(I);
-      PStart := PLine;
-   end;
+		SetString(s, PStart, PLine - PStart);
+		SetLength(Result, Length(Result) + 1);
+		Result[Length(Result) - 1] := s;
+		inc(PLine);
+		inc(I);
+		PStart := PLine;
+	end;
 
 end;
 
 procedure TAI21.CreateRESTRespose;
 begin
-   FAcceptType := 'application/json';
-   FContentType := 'application/json';
-   //
-   FRESTResponse := TRESTResponse.Create(nil);
-   FRESTResponse.Name := '_restresponse';
-   FRESTResponse.ContentType := FContentType;
+	FAcceptType := 'application/json';
+	FContentType := 'application/json';
+	//
+	FRESTResponse := TRESTResponse.Create(nil);
+	FRESTResponse.Name := '_restresponse';
+	FRESTResponse.ContentType := FContentType;
 end;
 
 procedure TAI21.CreateRESTClient;
 begin
-   FRESTClient := TRESTClient.Create(nil);
-   FRESTClient.AcceptCharset := 'UTF-8';
-   FRESTClient.UserAgent := 'MagnumLabsAI21Client';
-   FRESTClient.Accept := FAcceptType;
-   FRESTClient.ContentType := FContentType;
-   FRESTClient.OnHTTPProtocolError := HttpClientError;
+	FRESTClient := TRESTClient.Create(nil);
+	FRESTClient.AcceptCharset := 'UTF-8';
+	FRESTClient.UserAgent := 'MagnumLabsAI21Client';
+	FRESTClient.Accept := FAcceptType;
+	FRESTClient.ContentType := FContentType;
+	FRESTClient.OnHTTPProtocolError := HttpClientError;
 end;
 
 procedure TAI21.CreateRESTRequest;
 begin
-   FRESTRequest := TRESTRequestOAI.Create(nil);
-   FRESTRequest.AcceptCharset := 'UTF-8';
-   FRESTRequest.Accept := FAcceptType;
-   FRESTRequest.Method := TRESTRequestMethod.rmPOST;
-   FRESTRequest.Params.Clear;
-   FRESTRequest.Body.ClearBody;
-   FRESTRequest.Response := FRESTResponse;
-   FRESTRequest.Client := FRESTClient;
-   FRESTRequest.OnAfterExecute := AfterExecute;
-   FRESTRequest.FRequestType := TAI21Requests.orNone;
-   FRESTRequest.OnHTTPProtocolError := HttpRequestError;
+	FRESTRequest := TRESTRequestOAI.Create(nil);
+	FRESTRequest.AcceptCharset := 'UTF-8';
+	FRESTRequest.Accept := FAcceptType;
+	FRESTRequest.Method := TRESTRequestMethod.rmPOST;
+	FRESTRequest.Params.Clear;
+	FRESTRequest.Body.ClearBody;
+	FRESTRequest.Response := FRESTResponse;
+	FRESTRequest.Client := FRESTClient;
+	FRESTRequest.OnAfterExecute := AfterExecute;
+	FRESTRequest.FRequestType := TAI21Requests.orNone;
+	FRESTRequest.OnHTTPProtocolError := HttpRequestError;
 end;
 
 constructor TAI21.Create(var MemTable: TFDMemTable; const APIFileName: String = '');
 var
-   fileName: String;
+	fileName: String;
 begin
-   FErrorMessage := '';
-   FOnResponse := nil;
-   FMemtable := MemTable;
-   //
-   CreateRESTRespose();
-   //
-   CreateRESTClient();
-   //
-   CreateRESTRequest();
+	FErrorMessage := '';
+	FOnResponse := nil;
+	FMemtable := MemTable;
+	//
+	CreateRESTRespose();
+	//
+	CreateRESTClient();
+	//
+	CreateRESTRequest();
 
 {$IF Defined(ANDROID)}
-   fileName := TPath.Combine(TPath.GetDocumentsPath, APIFileName);
+	fileName := TPath.Combine(TPath.GetDocumentsPath, APIFileName);
 {$ELSE}
-   fileName := APIFileName;
+	fileName := APIFileName;
 {$ENDIF}
-   if not APIFileName.IsEmpty and FileExists(fileName) then
-   begin
-      FAPIKey := TFile.ReadAllText(fileName);
-      SetApiKey(FAPIKey);
-   end;
+	if not APIFileName.IsEmpty and FileExists(fileName) then
+	begin
+		FAPIKey := TFile.ReadAllText(fileName);
+		SetApiKey(FAPIKey);
+	end;
 
 end;
 
 destructor TAI21.Destroy;
 begin
-   FRESTResponse.Free;
-   FRESTRequest.Free;
+	FRESTResponse.Free;
+	FRESTRequest.Free;
 	FRESTClient.Free;
-   inherited Destroy;
+	inherited Destroy;
 end;
 
 procedure TAI21.HttpRequestError(Sender: TCustomRESTRequest);
 begin
-   FRESTRequest.FRequestType := orNone;
-   FStatusCode := FRESTRequest.Response.StatusCode;
-   FErrorMessage := 'Request error: ' + FRESTRequest.Response.StatusCode.ToString;
-   FOnError(Self);
+	FRESTRequest.FRequestType := orNone;
+	FStatusCode := FRESTRequest.Response.StatusCode;
+	FErrorMessage := 'Request error: ' + FRESTRequest.Response.StatusCode.ToString;
+	FOnError(Self);
 end;
 
 procedure TAI21.HttpClientError(Sender: TCustomRESTClient);
 begin
-   FRESTRequest.FRequestType := orNone;
-   FErrorMessage := FRESTRequest.Response.ErrorMessage;
-   FOnError(Self);
+	FRESTRequest.FRequestType := orNone;
+	FErrorMessage := FRESTRequest.Response.ErrorMessage;
+	FOnError(Self);
 end;
 
 procedure TAI21.SetEndPoint(const Value: String);
 begin
-   FEndpoint := Value;
-   FRESTClient.BaseURL := Value;
+	FEndpoint := Value;
+	FRESTClient.BaseURL := Value;
 end;
 
 procedure TAI21.SetEngine(const Value: TAI21Engine);
 begin
-   FEngine := Value;
+	FEngine := Value;
 end;
 
 procedure TAI21.SetOrganization(const Value: String);
 begin
-   FOrganization := Value;
+	FOrganization := Value;
 end;
 
 procedure TAI21.Stop;
 begin
-   FRESTRequest.FRequestType := orNone;
+	FRESTRequest.FRequestType := orNone;
 end;
 
 function TAI21.GetChoicesResult: String;
 var
-   JSonValue: TJSonValue;
-   JsonArray: TJSONArray;
-   ArrayElement: TJSonValue;
+	JSonValue: TJSonValue;
+	JsonArray: TJSONArray;
+	ArrayElement: TJSonValue;
 begin
-  Result := '';
+	Result := '';
 
-{	JSonValue := TJSonObject.ParseJSONValue(FBodyContent);
-
-  JSonValue.TryGetValue<TJSONArray>('data',JsonArray);
-
-
-  //	JsonArray := JSonValue.GetValue<TJSONArray>('data');
+	JSonValue := TJSonObject.ParseJSONValue(FBodyContent);
+	JsonArray := JSonValue.GetValue<TJSONArray>('completions');
 	for ArrayElement in JsonArray do
-		Result := Result + ArrayElement.GetValue<String>('text');
-}
+		Result := Result + ArrayElement.GetValue<String>('data.text');
 end;
 
 procedure TAI21.readEngines();
 begin
-   if not Assigned(FEnginesList) then
-      FEnginesList := TDictionary<String, String>.Create;
+	if not Assigned(FEnginesList) then
+		FEnginesList := TDictionary<String, String>.Create;
 
-   FEnginesList.Clear;
-   while not FMemtable.Eof do
-   begin
-      FEnginesList.Add(FMemtable.FieldByName('id').AsString, FMemtable.FieldByName('ready').AsString);
-      FMemtable.Next;
-   end;
+	FEnginesList.Clear;
+	while not FMemtable.Eof do
+	begin
+		FEnginesList.Add(FMemtable.FieldByName('id').AsString, FMemtable.FieldByName('ready').AsString);
+		FMemtable.Next;
+	end;
 
 end;
 
 procedure TAI21.AfterExecute(Sender: TCustomRESTRequest);
 var
 	LStatusCode: Integer;
+	JSONObject: TJSONObject;
 	FRESTResponseDataSetAdapter: TRESTResponseDataSetAdapter;
 begin
 
-   LStatusCode := FRESTResponse.StatusCode;
+	LStatusCode := FRESTResponse.StatusCode;
 
-   if FStatusCode = 0 then
-      FStatusCode := LStatusCode;
+	if FStatusCode = 0 then
+		FStatusCode := LStatusCode;
 
-   if not(FStatusCode in [200, 201]) then
-		Exit;
+	if not(FStatusCode in [200, 201]) then
+		exit;
 
 	FBodyContent := FRESTResponse.Content;
 
@@ -294,54 +290,54 @@ begin
 	end;
 
 	if not FMemtable.IsEmpty then
-      FMemtable.EmptyDataSet;
+		FMemtable.EmptyDataSet;
 
-   FRESTResponseDataSetAdapter := TRESTResponseDataSetAdapter.Create(nil);
-   try
-      FRESTResponseDataSetAdapter.DataSet := FMemtable;
-      FRESTResponseDataSetAdapter.Response := FRESTResponse;
-      FMemtable.First;
-   finally
-      FRESTResponseDataSetAdapter.Free;
-   end;
+	FRESTResponseDataSetAdapter := TRESTResponseDataSetAdapter.Create(nil);
+	try
+		FRESTResponseDataSetAdapter.DataSet := FMemtable;
+		FRESTResponseDataSetAdapter.Response := FRESTResponse;
+		FMemtable.First;
+	finally
+		FRESTResponseDataSetAdapter.Free;
+	end;
 
-   FRESTRequest.FRequestType := orNone;
-   if Assigned(FOnResponse) then
-      FOnResponse(Self);
+	FRESTRequest.FRequestType := orNone;
+	if Assigned(FOnResponse) then
+		FOnResponse(Self);
 end;
 
 procedure TAI21.SetApiKey(const Value: string);
 begin
-   FAPIKey := Value;
-   FRESTRequest.Params.AddHeader('Authorization', 'Bearer ' + FAPIKey);
-   FRESTRequest.Params.ParameterByName('Authorization').Options := [poDoNotEncode];
+	FAPIKey := Value;
+	FRESTRequest.Params.AddHeader('Authorization', 'Bearer ' + FAPIKey);
+	FRESTRequest.Params.ParameterByName('Authorization').Options := [poDoNotEncode];
 end;
 
 procedure TAI21.SetCompletions(const Value: TComplete);
 begin
-   FCompletions := Value;
+	FCompletions := Value;
 end;
 
 procedure TAI21.Execute;
 begin
-   if not FMemtable.IsEmpty then
-      FMemtable.EmptyDataSet;
-   case FRequestType of
-      orComplete:
-         ExecuteCompletions();
-   end;
+	if not FMemtable.IsEmpty then
+		FMemtable.EmptyDataSet;
+	case FRequestType of
+		orComplete:
+			ExecuteCompletions();
+	end;
 end;
 
 procedure TAI21.ExecuteCompletions;
 var
-   ABody: String;
+	ABody: String;
 begin
-   FRESTRequest.ClearBody;
-   FCompletions.CreateCompletion(ABody);
-   FRESTRequest.Resource := AI21_GET_COMPLETION;
-   FRESTRequest.Body.Add(ABody, TRESTContentType.ctAPPLICATION_JSON);
-   FRESTRequest.Method := TRESTRequestMethod.rmPOST;
-   FRESTRequest.Execute;
+	FRESTRequest.ClearBody;
+	FCompletions.CreateCompletion(ABody);
+	FRESTRequest.Resource := AI21_GET_COMPLETION;
+	FRESTRequest.Body.Add(ABody, TRESTContentType.ctAPPLICATION_JSON);
+	FRESTRequest.Method := TRESTRequestMethod.rmPOST;
+	FRESTRequest.Execute;
 end;
 
 end.

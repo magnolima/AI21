@@ -217,7 +217,6 @@ var
 	JSONBool: TJSONBool;
 begin
 	Result := nil;
-	// AJSONObject := TJSONObject.Create;
 	case VarType(Value) of
 		varSmallInt, varInteger, varSingle, varDouble:
 			begin
@@ -284,7 +283,6 @@ var
 	JSONArray: TJSONArray;
 begin
 	AJSONObject := TJSONObject.Create;
-
 	AJSONObject.AddPair(TJSONPair.Create('prompt', FPrompt));
 	AJSONObject.AddPair(TJSONPair.Create('numResults', TJSONNumber.Create(FNumberOfCompletions)));
 	AJSONObject.AddPair(TJSONPair.Create('maxTokens', TJSONNumber.Create(FMaxTokens)));

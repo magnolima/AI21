@@ -75,7 +75,6 @@ type
 		lbMaxTokens: TLabel;
 		lbTemperature: TLabel;
 		lbTopP: TLabel;
-		Button3: TButton;
 		procedure FormCreate(Sender: TObject);
 		procedure FormDestroy(Sender: TObject);
 		procedure Button1Click(Sender: TObject);
@@ -85,11 +84,9 @@ type
 		procedure nbMaxTokensChange(Sender: TObject);
 		procedure tbTemperatureChange(Sender: TObject);
 		procedure nbTopPChange(Sender: TObject);
-		procedure Button3Click(Sender: TObject);
 	private
 		procedure InitCompletions;
 		procedure OnOpenAIError(Sender: TObject);
-		function GetResult: String;
 		{ Private declarations }
 	public
 		{ Public declarations }
@@ -174,11 +171,6 @@ begin
 	mmResponse.Lines.Clear;
 end;
 
-procedure TfrmDemoAI21.Button3Click(Sender: TObject);
-begin
-	mmResponse.Lines.Text := GetResult;
-end;
-
 procedure TfrmDemoAI21.FormShow(Sender: TObject);
 begin
 	AI21.RequestType := orComplete;
@@ -244,6 +236,8 @@ var
 	ACompletions: TComplete;
 	I: Integer;
 	sPrompt: String;
+	FrequencyPenalty: TFrequencyPenalty;
+	PresencePenalty: TPresencePenalty;
 
 	function getStops(Text: String): TArray<String>;
 	begin
@@ -267,8 +261,23 @@ begin
 	ACompletions.Stop := getStops(Edit1.Text);
 	ACompletions.Prompt := sPrompt;
 	ACompletions.LogProbabilities := -1; // -1 will set as null default
-	// ACompletions.FrequencyPenalty := ;
-	// ACompletions.PresencePenalty := 0.1;
+
+	FrequencyPenalty.Scale := 0.1;
+	FrequencyPenalty.ApplyToNumbers := False;
+	FrequencyPenalty.ApplyToPunctuations := False;
+	FrequencyPenalty.ApplyToStopwords := False;
+	FrequencyPenalty.ApplyToWhitespaces := False;
+	FrequencyPenalty.ApplyToEmojis := False;
+
+	PresencePenalty.Scale := 0.5;
+	PresencePenalty.ApplyToNumbers := False;
+	PresencePenalty.ApplyToPunctuations := False;
+	PresencePenalty.ApplyToStopwords := False;
+	PresencePenalty.ApplyToWhitespaces := False;
+	PresencePenalty.ApplyToEmojis := False;
+
+	ACompletions.FrequencyPenalty := FrequencyPenalty ;
+	ACompletions.PresencePenalty := PresencePenalty;
 	AI21.Completions := ACompletions;
 
 	case EngineIndex of
@@ -332,62 +341,5 @@ begin
 		end).Start;
 end;
 
-function TfrmDemoAI21.GetResult: String;
-var
-  vJSONBytes: TBytes;
-  vJSONScenario: TJSONValue;
-  vJSONArray: TJSONArray;
-  vJSONValue: TJSONValue;
-  vJSONObject: TJSONObject;
-  vJSONPair: TJSONPair;
-  vJSONScenarioEntry: TJSONValue;
-  vJSONScenarioValue: TJSONString;
-begin
 
-  vJSONBytes := BytesOf( mmPrompt.Lines.Text);
-
-  vJSONScenario := TJSONObject.ParseJSONValue(vJSONBytes, 0);
-  if vJSONScenario <> nil then
-  try
-    //BetFair Specific 'caption' key
-    vJSONArray := vJSONScenario as TJSONArray;
-    for vJSONValue in vJSONArray do
-    begin
-      vJSONObject := vJSONValue as TJSONObject;
-      vJSONPair := vJSONObject.Get('caption');
-      vJSONScenarioEntry := vJSONPair.JsonValue;
-      vJSONScenarioValue := vJSONScenarioEntry as TJSONString;
-		mmResponse.lines.Add(vJSONScenarioValue.Value);
-    end;
-  finally
-    vJSONScenario.Free;
-  end;
-end;
-(*
-function TfrmDemoAI21.GetResult: String;
-var
-	JSonValue: TJSonValue;
-	JsonArray: TJSONArray;
-	ArrayElement: TJSonValue;
-	value: string;
-begin
-	Result := '';
-
-
- //	JSonValue := TJSonObject.ParseJSONValue(TEncoding.UTF8.GetBytes(mmPrompt.Lines.Text));
-// {"id":"02e4c7e8-af64-4dce-bd86-dbf666f37ce3","prompt":{"text":"parsing the json file is","tokens":[{"generatedToken":{"token":"?parsing","logprob":-16.004453659057617},"topTokens":null,"textRange":{"start":0,"end":7}},{"generatedToken":{"token":"?the","logprob":-3.262373208999634},"topTokens":null,"textRange":{"start":7,"end":11}},{"generatedToken":{"token":"?json","logprob":-4.391495704650879},"t
-	JSonValue := TJSonObject.ParseJSONValue('id');
-	JsonArray := JSonValue.GetValue<TJSONArray>('id');
-	for value in jsonvalue.ToString do
-		result := result + value;
-
-//	Result := '';
-//
-//	JSonValue := TJSonObject.ParseJSONValue(FBodyContent);
-//	JsonArray := JSonValue.GetValue<TJSONArray>('choices');
-//	for ArrayElement in JsonArray do
-//		Result := Result + ArrayElement.GetValue<String>('text');
-
-end;
-*)
 end.

@@ -218,13 +218,18 @@ var
 begin
 	Result := nil;
 	case VarType(Value) of
-		varSmallInt, varInteger, varSingle, varDouble:
+		 varSmallInt, varInteger:
+     begin
+        JSONNumber := TJSONNumber.Create(Integer(Value));
+				Result := AJSONObject.AddPair(TJSONPair.Create(Attrib, JSONNumber))
+     end;
+     varSingle, varDouble:
 			begin
-				JSONNumber := TJSONNumber.Create(Value);
+				JSONNumber := TJSONNumber.Create(Double(Value));
 				Result := AJSONObject.AddPair(TJSONPair.Create(Attrib, JSONNumber))
 			end;
 		varString:
-			Result := AJSONObject.AddPair(Attrib, Value);
+			Result := AJSONObject.AddPair(Attrib, String(Value));
 		varBoolean:
 			begin
 				JSONBool := TJSONBool.Create(Value);

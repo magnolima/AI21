@@ -3,6 +3,7 @@
 
 Initial release
 
+- Fixed some issues with Delphi 11
 - Added GetChoicesResult() method
 - Removed old OpenAI based on demo code.
 
